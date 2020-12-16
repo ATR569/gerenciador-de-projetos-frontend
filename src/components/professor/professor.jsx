@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Main from '../template/Main';
+import { URI } from '../../config/config'
+import { faChalkboardTeacher } from '@fortawesome/free-solid-svg-icons'
+import { getToken } from '../../service/auth'
 
 const headerProps = {
-    icon: 'users',
+    icon: faChalkboardTeacher,
     title: 'Professores',
-    subtitle: 'Área de professores: Listar, Alterar e Excluir!'
+    subtitle: 'Lista de professores'
 }
 
-//const baseUrl = "https://gerenciador-de-projetos-back.herokuapp.com/api/professores"
 //const baseUrl = "localhost:8080/api/alunos"
-const baseUrl = "https://gerenciador-de-projetos-back.herokuapp.com/api/alunos"
+const baseUrl = 'api/professores'
 
 const initialState = {
     prof: {
@@ -29,8 +31,17 @@ export default class ProfessorCrud extends Component {
     state = { ...initialState }
 
     componentWillMount() {
-        axios(baseUrl).then(resp => {
+        axios(`${URI}/${baseUrl}`, {
+            headers: {
+                'Authorization': `Bearer ${getToken()}` 
+            }
+        })
+        .then(resp => {
             this.setState({ list: resp.data })
+        })
+        .catch(err => {
+            const erro = err.response.data
+            alert(`ERRO ${erro.status}: ${erro.descricao}`)
         })
     }
 
