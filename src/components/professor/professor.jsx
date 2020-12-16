@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Main from '../template/Main';
 import { URI } from '../../config/config'
-import { faChalkboardTeacher, faProjectDiagram } from '@fortawesome/free-solid-svg-icons'
+import { faChalkboardTeacher, faProjectDiagram, faEye} from '@fortawesome/free-solid-svg-icons'
 import { getToken } from '../../service/auth'
 import jwt_decode from "jwt-decode";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -170,7 +170,7 @@ export default class ProfessorCrud extends Component {
             <div className="col-12 d-flex justify-content-end">
                 <button className="btn btn-secondary ml-2"
                     onClick={e => this.clear(e)}>
-                    Cancelar
+                    Voltar
                 </button>
             </div>
         )
@@ -263,7 +263,8 @@ export default class ProfessorCrud extends Component {
                     <td>
                         <button className="btn btn-warning"
                             onClick={() => this.handleClick(prof)}>
-                            <i className="fa fa-pencil"></i>
+                            {/* <i className="fa fa-pencil"></i> */}
+                            <FontAwesomeIcon icon={faEye}/>
                         </button>
                     </td>
                 </tr>
