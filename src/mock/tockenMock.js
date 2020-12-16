@@ -1,0 +1,4 @@
+const TOKEN_ALUNO_MOCK = ''
+const TOKEN_PROFESSOR_MOCK = ''
+
+export default {TOKEN_ALUNO_MOCK, TOKEN_PROFESSOR_MOCK}

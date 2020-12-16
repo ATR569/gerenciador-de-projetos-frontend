@@ -1,16 +1,21 @@
 import './Nav.css'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChalkboardTeacher, faHome, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { login } from '../../service/auth'
 
 export default props =>
     <aside className="menu-area">
         <nav className="menu">
-            {/* Refatorar em casa! */}
             <Link to="/">
-                <i className="fa fa-home"></i> Início
+                <FontAwesomeIcon icon={faHome} /> Início
             </Link>
-            <Link to="/users">
-                <i className="fa fa-users"></i> Usuários
+            <Link to="/professores">
+                <FontAwesomeIcon icon={faChalkboardTeacher} /> Professores
+            </Link>
+            <Link to="/logout">
+                <FontAwesomeIcon icon={faSignOutAlt} /> Sair
             </Link>
         </nav>
     </aside>
