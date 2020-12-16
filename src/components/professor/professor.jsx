@@ -23,26 +23,34 @@ const initialState = {
         areaAtuacao: '',
         formacao: ''
     },
-    list: []
+    list: [],
+    mostrarForm: false,
+    mostrarList: false,
 }
 
 export default class ProfessorCrud extends Component {
 
     state = { ...initialState }
 
+    handleClick() {
+        this.setState({
+            mostrarForm: true
+        })
+    }
+
     componentWillMount() {
         axios(`${URI}/${baseUrl}`, {
             headers: {
-                'Authorization': `Bearer ${getToken()}` 
+                'Authorization': `Bearer ${getToken()}`
             }
         })
-        .then(resp => {
-            this.setState({ list: resp.data })
-        })
-        .catch(err => {
-            const erro = err.response.data
-            alert(`ERRO ${erro.status}: ${erro.descricao}`)
-        })
+            .then(resp => {
+                this.setState({ list: resp.data })
+            })
+            .catch(err => {
+                const erro = err.response.data
+                alert(`ERRO ${erro.status}: ${erro.descricao}`)
+            })
     }
 
     clear() {
@@ -73,82 +81,94 @@ export default class ProfessorCrud extends Component {
         this.setState({ prof })
     }
 
-    // renderForm() {
-    //     return (
-    //         <div className="form">
-    //             <div className="row">
-    //                 <div className="col-12 col-md-6">
-    //                     <div className="form-group">
-    //                         <label>Nome</label>
-    //                         <input type="text" className="form-control"
-    //                             name="nome"
-    //                             value={this.state.prof.nome}
-    //                             onChange={e => this.updateField(e)}
-    //                             placeholder="Digite o nome..." />
-    //                     </div>
-    //                 </div>
+    renderForm() {
+        return (
+            <div className="form">
+                <div className="row">
+                    <div className="col-12 col-md-6">
+                        <div className="form-group">
+                            <label>Nome</label>
+                            <input type="text" className="form-control"
+                                name="nome"
+                                value={this.state.prof.nome}
+                                onChange={e => this.updateField(e)}
+                                placeholder="Digite o nome..." />
+                        </div>
+                    </div>
 
-    //                 <div className="col-12 col-md-6">
-    //                     <div className="form-group">
-    //                         <label>Senha</label>
-    //                         <input type="password" className="form-control"
-    //                             name="senha"
-    //                             value={this.state.prof.senha}
-    //                             onChange={e => this.updateField(e)}
-    //                             placeholder="Digite a senha..." />
-    //                     </div>
-    //                 </div>
+                    <div className="col-12 col-md-6">
+                        <div className="form-group">
+                            <label>Senha</label>
+                            <input type="password" className="form-control"
+                                name="senha"
+                                value={this.state.prof.senha}
+                                onChange={e => this.updateField(e)}
+                                placeholder="Digite a senha..." />
+                        </div>
+                    </div>
 
-    //                 <div className="col-12 col-md-6">
-    //                     <div className="form-group">
-    //                         <label>Área Atuação</label>
-    //                         <input type="text" className="form-control"
-    //                             name="areaAtuacao"
-    //                             value={this.state.prof.areaAtuacao}
-    //                             onChange={e => this.updateField(e)}
-    //                             placeholder="Digite a área de atuação..." />
-    //                     </div>
-    //                 </div>
+                    <div className="col-12 col-md-6">
+                        <div className="form-group">
+                            <label>Área Atuação</label>
+                            <input type="text" className="form-control"
+                                name="areaAtuacao"
+                                value={this.state.prof.areaAtuacao}
+                                onChange={e => this.updateField(e)}
+                                placeholder="Digite a área de atuação..." />
+                        </div>
+                    </div>
 
-    //                 <div className="col-12 col-md-6">
-    //                     <div className="form-group">
-    //                         <label>Formação</label>
-    //                         <input type="text" className="form-control"
-    //                             name="formacao"
-    //                             value={this.state.prof.formacao}
-    //                             onChange={e => this.updateField(e)}
-    //                             placeholder="Digite a sua formação..." />
-    //                     </div>
-    //                 </div>
-    //             </div>
+                    <div className="col-12 col-md-6">
+                        <div className="form-group">
+                            <label>Formação</label>
+                            <input type="text" className="form-control"
+                                name="formacao"
+                                value={this.state.prof.formacao}
+                                onChange={e => this.updateField(e)}
+                                placeholder="Digite a sua formação..." />
+                        </div>
+                    </div>
+                </div>
 
-    //             <hr />
-    //             <div className="row">
-    //                 <div className="col-12 d-flex justify-content-end">
-    //                     <button className="btn btn-primary"
-    //                         onClick={e => this.save(e)}>
-    //                         Salvar
-    //                     </button>
+                <hr />
+                <div className="row">
+                    <div className="col-12 d-flex justify-content-end">
+                        <button className="btn btn-primary"
+                            onClick={e => this.save(e)}>
+                            Salvar
+                        </button>
 
-    //                     <button className="btn btn-secondary ml-2"
-    //                         onClick={e => this.clear(e)}>
-    //                         Cancelar
-    //                     </button>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     )
-    // }
+                        <button className="btn btn-secondary ml-2"
+                            // onClick={e => this.clear(e)}>
+                            onClick={e => this.setState({ mostrarForm: false})}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     load(prof) {
         this.setState({ prof })
     }
 
     remove(prof) {
-        axios.delete(`${baseUrl}/${prof.id}`).then(resp => {
+
+        axios.delete(`${URI}/${baseUrl}/${prof.id}`, {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            }
+        }).then(resp => {
             const list = this.getUpdatedList(prof, false)
             this.setState({ list })
+            alert(`Professor: ${prof.nome} deletado com sucesso`)
+        }).catch(err => {
+            const erro = err.response.data
+            alert(`ERRO ${erro.status}: ${erro.descricao}`)
         })
+        console.log(prof)
+        console.log(`${URI}/${baseUrl}/${prof.id}`)
     }
 
     renderTable() {
@@ -181,6 +201,12 @@ export default class ProfessorCrud extends Component {
                     <td>{prof.formacao}</td>
                     <td>
                         <button className="btn btn-warning"
+                            onClick={() => this.handleClick()}>
+                            <i className="fa fa-pencil"></i>
+                        </button>
+                    </td>
+                    {/* <td>
+                        <button className="btn btn-warning"
                             onClick={() => this.load(prof)}>
                             <i className="fa fa-pencil"></i>
                         </button>
@@ -188,7 +214,7 @@ export default class ProfessorCrud extends Component {
                             onClick={() => this.remove(prof)}>
                             <i className="fa fa-trash"></i>
                         </button>
-                    </td>
+                    </td> */}
                 </tr>
             )
         })
@@ -197,8 +223,8 @@ export default class ProfessorCrud extends Component {
     render() {
         return (
             <Main {...headerProps}>
-                {/* {this.renderForm()} */}
-                {this.renderTable()}
+                {this.state.mostrarForm && this.renderForm()}
+                {!this.state.mostrarForm && this.renderTable()}
             </Main>
         )
     }
