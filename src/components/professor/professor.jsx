@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Main from '../template/Main';
 import { URI } from '../../config/config'
-import { faChalkboardTeacher } from '@fortawesome/free-solid-svg-icons'
+import { faChalkboardTeacher, faProjectDiagram } from '@fortawesome/free-solid-svg-icons'
 import { getToken } from '../../service/auth'
+import jwt_decode from "jwt-decode";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const headerProps = {
     icon: faChalkboardTeacher,
@@ -11,7 +13,6 @@ const headerProps = {
     subtitle: 'Lista de professores'
 }
 
-//const baseUrl = "localhost:8080/api/alunos"
 const baseUrl = 'api/professores'
 
 const initialState = {
@@ -32,10 +33,12 @@ export default class ProfessorCrud extends Component {
 
     state = { ...initialState }
 
-    handleClick() {
+    handleClick(prof) {
         this.setState({
             mostrarForm: true
         })
+
+        this.load(prof)
     }
 
     componentWillMount() {
@@ -54,19 +57,36 @@ export default class ProfessorCrud extends Component {
     }
 
     clear() {
-        this.setState({ prof: initialState.prof })
+        this.setState({ prof: initialState.prof, mostrarForm: false })
     }
 
-    save() {
+    put() {
         const prof = this.state.prof
-        const method = prof.id ? 'put' : 'post'
-        const url = prof.id ? `${baseUrl}/${prof.id}` : baseUrl
-        axios[method](url, prof)
-        axios.post(baseUrl, prof)
-            .then(resp => {
-                const list = this.getUpdatedList(resp.data)
-                this.setState({ prof: initialState.prof, list })
+
+        axios({
+            method: 'put',
+            url: `${URI}/${baseUrl}/${prof.id}`,
+            headers: {
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json'
+            },
+            data: {
+                nome: prof.nome,
+                senha: prof.senha,
+                areaAtuacao: prof.areaAtuacao,
+                formacao: prof.formacao
+            }
+        }).then(resp => {
+            const list = this.getUpdatedList(prof, false)
+            this.setState({ list })
+            alert(`Professor: ${prof.nome} editado com sucesso`)
+            this.setState({
+                mostrarForm: false
             })
+        }).catch(err => {
+            const erro = err.response.data
+            alert(`ERRO ${erro.status}: ${erro.descricao}`)
+        })
     }
 
     getUpdatedList(prof, add = true) {
@@ -79,6 +99,81 @@ export default class ProfessorCrud extends Component {
         const prof = { ...this.state.prof }
         prof[event.target.name] = event.target.value
         this.setState({ prof })
+    }
+
+    load(prof) {
+        this.setState({ prof })
+    }
+
+    remove() {
+        const prof = this.state.prof
+
+        axios({
+            method: 'delete',
+            url: `${URI}/${baseUrl}/${prof.id}`,
+            headers: {
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json'
+            },
+            data: {
+                nome: prof.nome,
+                senha: prof.senha,
+                areaAtuacao: prof.areaAtuacao,
+                formacao: prof.formacao
+            }
+        }).then(resp => {
+            const list = this.getUpdatedList(prof, false)
+            this.setState({ list })
+            alert(`Professor: ${prof.nome} deletado com sucesso`)
+            this.setState({
+                mostrarForm: false
+            })
+        }).catch(err => {
+            const erro = err.response.data
+            alert(`ERRO ${erro.status}: ${erro.descricao}`)
+        })
+    }
+
+    renderToolbar() {
+        const prof = this.state.prof
+        const { usuario } = jwt_decode(getToken())
+
+        if (prof.id === usuario.id) {
+            return (
+                <div className="row">
+                    <div className="col-12 d-flex justify-content-end">
+                        <button className="btn btn-danger"
+                            onClick={e => this.remove(e)}>
+                            Remover Usuário
+                            </button>
+
+                        <button className="btn btn-primary ml-5"
+                            onClick={e => this.put(e)}>
+                            Salvar
+                            </button>
+
+                        <button className="btn btn-secondary ml-2"
+                            onClick={e => this.clear(e)}>
+                            Cancelar
+                            </button>
+
+                        <button className="btn btn-warning ml-2"
+                            onClick={e => this.clear(e)}>
+                            <FontAwesomeIcon icon={faProjectDiagram} /> Criar Projeto
+                            </button>
+                    </div>
+                </div>
+            )
+        }
+
+        return (
+            <div className="col-12 d-flex justify-content-end">
+                <button className="btn btn-secondary ml-2"
+                    onClick={e => this.clear(e)}>
+                    Cancelar
+                </button>
+            </div>
+        )
     }
 
     renderForm() {
@@ -131,45 +226,11 @@ export default class ProfessorCrud extends Component {
                 </div>
 
                 <hr />
-                <div className="row">
-                    <div className="col-12 d-flex justify-content-end">
-                        <button className="btn btn-primary"
-                            onClick={e => this.save(e)}>
-                            Salvar
-                        </button>
-
-                        <button className="btn btn-secondary ml-2"
-                            // onClick={e => this.clear(e)}>
-                            onClick={e => this.setState({ mostrarForm: false})}>
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
+                {this.renderToolbar()}
             </div>
         )
     }
 
-    load(prof) {
-        this.setState({ prof })
-    }
-
-    remove(prof) {
-
-        axios.delete(`${URI}/${baseUrl}/${prof.id}`, {
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            }
-        }).then(resp => {
-            const list = this.getUpdatedList(prof, false)
-            this.setState({ list })
-            alert(`Professor: ${prof.nome} deletado com sucesso`)
-        }).catch(err => {
-            const erro = err.response.data
-            alert(`ERRO ${erro.status}: ${erro.descricao}`)
-        })
-        console.log(prof)
-        console.log(`${URI}/${baseUrl}/${prof.id}`)
-    }
 
     renderTable() {
         return (
@@ -201,20 +262,10 @@ export default class ProfessorCrud extends Component {
                     <td>{prof.formacao}</td>
                     <td>
                         <button className="btn btn-warning"
-                            onClick={() => this.handleClick()}>
+                            onClick={() => this.handleClick(prof)}>
                             <i className="fa fa-pencil"></i>
                         </button>
                     </td>
-                    {/* <td>
-                        <button className="btn btn-warning"
-                            onClick={() => this.load(prof)}>
-                            <i className="fa fa-pencil"></i>
-                        </button>
-                        <button className="btn btn-danger ml-2"
-                            onClick={() => this.remove(prof)}>
-                            <i className="fa fa-trash"></i>
-                        </button>
-                    </td> */}
                 </tr>
             )
         })
