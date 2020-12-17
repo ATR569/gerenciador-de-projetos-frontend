@@ -47,12 +47,12 @@ export default class Projeto extends Component {
                 <div className="row">
                     <div className="col-12 d-flex justify-content-end">
                         <button className="btn btn-secondary ml-2"
-                            onClick={e => this.props.setModoForm('list')}>
+                            onClick={e => this.props.setModo('list')}>
                             Voltar
                         </button>
 
                         <button className="btn btn-warning ml-2"
-                            onClick={e => this.clear(e)}>
+                            onClick={e => this.props.setModo('form')}>
                             <FontAwesomeIcon icon={faAddressCard} /> Adicionar Colaborador
                         </button>
                     </div>
@@ -63,7 +63,7 @@ export default class Projeto extends Component {
         return (
             <div className="col-12 d-flex justify-content-end">
                 <button className="btn btn-secondary ml-2"
-                    onClick={e => this.props.setModoForm('list')}>
+                    onClick={e => this.props.setModo('list')}>
                     Voltar
                 </button>
             </div>

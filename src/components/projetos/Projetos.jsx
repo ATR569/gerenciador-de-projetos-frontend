@@ -6,8 +6,8 @@ import { faUserPlus, faEye, faProjectDiagram } from '@fortawesome/free-solid-svg
 import { getToken } from '../../service/auth'
 import jwt_decode from "jwt-decode";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Colaboradores from '../colaboradores/Colaboradores'
 import Projeto  from './Projeto'
+import ColaboradorForm  from '../colaboradores/ColaboradorForm'
 
 const headerProps = {
     icon: faProjectDiagram,
@@ -33,7 +33,7 @@ export default class Projetos extends Component {
 
     state = { ...initialState }
 
-    setModoForm(modo){
+    setModo(modo){
         this.setState({modo})
     }
 
@@ -152,7 +152,13 @@ export default class Projetos extends Component {
 
     renderProjeto(){
         return (
-            <Projeto projeto={this.state.projeto} setModoForm={this.setModoForm.bind(this)} />
+            <Projeto projeto={this.state.projeto} setModo={this.setModo.bind(this)} />
+        )
+    }
+
+    renderColaboradorForm() {
+        return (
+            <ColaboradorForm projeto={this.state.projeto} setModo={this.setModo.bind(this)} />
         )
     }
 
@@ -161,6 +167,7 @@ export default class Projetos extends Component {
             <Main {...headerProps}>
                 {this.state.modo === 'detail' && this.renderProjeto()}
                 {this.state.modo === 'list' && this.renderTable()}
+                {this.state.modo === 'form' && this.renderColaboradorForm()}
             </Main>
         )
     }
