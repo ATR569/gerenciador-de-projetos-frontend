@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import Main from '../template/Main'
 import CadastroAluno from './CadastroAluno'
 import CadastroProfessor from './CadastroProfessor'
 
@@ -25,7 +24,7 @@ export default class Cadastro extends Component {
 
     render() {
         return (
-            <Main {...headerProps}>
+            <React.Fragment>
                 <Form.Group>
                     <p className="col-12 lead text-muted">Tipo de Usuário</p>
                     <Form.Label className="d-flex-collumn ml-3">
@@ -52,9 +51,9 @@ export default class Cadastro extends Component {
                     <hr />
                 </Form.Group>
 
-                {this.state.aluno && <CadastroAluno />}
-                {!this.state.aluno && <CadastroProfessor />}
-            </Main>
+                {this.state.aluno && <CadastroAluno setModo = {this.props.setModo}/>}
+                {!this.state.aluno && <CadastroProfessor setModo = {this.props.setModo}/>}
+            </React.Fragment>
         )
     }
 }

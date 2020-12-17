@@ -34,7 +34,7 @@ const CadastroAluno = () => {
             data
         }).then(resp => {
             console.log("RESP: ", resp);
-            alert(`Aluno(a) ${data.nome} cadastrado(a) com sucesso`)
+            alert(`O Aluno(a) ${data.nome} de matricula ${resp.data.matricula} foi cadastrado(a) com sucesso`)
         }).catch(err => {
             const erro = err.response.data
             alert(`ERRO ${erro.status}: ${erro.descricao}`)
@@ -60,7 +60,7 @@ const CadastroAluno = () => {
                     }) => (
                         <Form noValidate onSubmit={handleSubmit} className="form-cadastro" autoComplete="off">
                             <FormGroup className="dadosAluno group">
-                                <Form.Group as={Col} md="6" controlId="inputNome">
+                                <Form.Group as={Col} md="12" controlId="inputNome">
                                     <Form.Label>Nome Completo *</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -76,7 +76,7 @@ const CadastroAluno = () => {
                                     </Form.Control.Feedback>
                                 </Form.Group>
 
-                                <Form.Group as={Col} md="6" controlId="inputCurso">
+                                <Form.Group as={Col} md="12" controlId="inputCurso">
                                     <Form.Label>Curso *</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -93,10 +93,10 @@ const CadastroAluno = () => {
                                 </Form.Group>
 
                                 <Form.Row as={Col} md="12">
-                                    <Form.Group as={Col} md="3" controlId="inputSenha">
+                                    <Form.Group as={Col} md="6" controlId="inputSenha">
                                         <Form.Label>Senha *</Form.Label>
                                         <Form.Control
-                                            type="text"
+                                            type="password"
                                             placeholder="Informe a Senha"
                                             name="senha"
                                             value={values.senha}
@@ -109,10 +109,10 @@ const CadastroAluno = () => {
                                     </Form.Control.Feedback>
                                     </Form.Group>
 
-                                    <Form.Group as={Col} md="3" controlId="inputConfirmacao">
+                                    <Form.Group as={Col} md="6" controlId="inputConfirmacao">
                                         <Form.Label>Confirmação de Senha *</Form.Label>
                                         <Form.Control
-                                            type="text"
+                                            type="password"
                                             placeholder="Informe a Confirmação"
                                             name="confirmacaoSenha"
                                             value={values.confirmacaoSenha}
@@ -129,6 +129,7 @@ const CadastroAluno = () => {
 
                                 <Form.Group as={Col} md="3">
                                     <Button className="" type="submit">Salvar</Button>
+                                    {/* <Button onClick={this.props.setModo("login")}>Cancelar</Button> */}
                                 </Form.Group>
 
                             </FormGroup>
