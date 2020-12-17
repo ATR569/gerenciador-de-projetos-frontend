@@ -13,7 +13,7 @@ import Footer from '../components/template/Footer'
 
 import {TOKEN_ALUNO_MOCK, TOKEN_PROFESSOR_MOCK} from '../mock/tockenMock'
 
-storeToken(TOKEN_PROFESSOR_MOCK)
+storeToken(TOKEN_ALUNO_MOCK)
 
 export default props =>
     <BrowserRouter>

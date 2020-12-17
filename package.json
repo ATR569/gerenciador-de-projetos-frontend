@@ -13,11 +13,7 @@
     "bootstrap": "^4.5.3",
     "chokidar": "^3.4.3",
     "font-awesome": "^4.7.0",
-<<<<<<< HEAD
-    "formik": "^2.2.6",
-=======
     "jwt-decode": "^3.1.2",
->>>>>>> 6430708a85e9c974810c9e33a07a1a0ba2e2eeb5
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
     "react-dom": "^17.0.1",
