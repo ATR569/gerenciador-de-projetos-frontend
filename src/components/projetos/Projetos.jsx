@@ -112,9 +112,6 @@ export default class Projetos extends Component {
         )
     }
 
-    renderForm() {
-    }
-
     renderTable() {
         return (
             <table className="table mt-4">
