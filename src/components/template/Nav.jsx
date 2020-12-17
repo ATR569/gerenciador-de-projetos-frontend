@@ -2,8 +2,7 @@ import './Nav.css'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChalkboardTeacher, faHome, faSignOutAlt, faUserGraduate } from '@fortawesome/free-solid-svg-icons'
-import { login } from '../../service/auth'
+import { faChalkboardTeacher, faHome, faSignOutAlt, faUserGraduate, faProjectDiagram } from '@fortawesome/free-solid-svg-icons'
 
 export default props =>
     <aside className="menu-area">
