@@ -1,14 +1,14 @@
 import axios from 'axios'
 import React, { Component } from 'react'
 import { URI } from '../../config/config'
-import { storeToken } from '../../service/auth'
+import { isAuthenticated, storeToken } from '../../service/auth'
 import SingleFormMain from '../template/SingleFormMain'
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'
 import Cadastro from '../cadastro/Cadastro'
 
-import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "./Login.css";
+import { Redirect } from 'react-router'
 
 const headerProps = {
     icon: faSignInAlt,
@@ -34,7 +34,7 @@ export default class Login extends Component {
         event.preventDefault();
     }
 
-    login() {
+    login(  ) {
         const user = this.state.user
 
         axios({
@@ -50,7 +50,7 @@ export default class Login extends Component {
         }).then(resp => {
             storeToken(resp.data.jwtToken)
             alert(`Login realizado com sucesso`)
-
+            window.location.reload()
         }).catch(err => {
             const erro = err.response.data
             alert(`ERRO ${erro.status}: ${erro.descricao}`)
@@ -79,7 +79,7 @@ export default class Login extends Component {
         return (
             <div className="Login">
                 <form onSubmit={this.handleSubmit}>
-                    <form size="lg" controlId="matricula">
+                    <div size="lg" controlId="matricula">
                         <label>Matricula</label>
                         <input type="text" className="form-control"
                             name="username"
@@ -87,8 +87,8 @@ export default class Login extends Component {
                             onChange={e => this.updateField(e)}
                             placeholder="Digite a matricula..."
                         />
-                    </form>
-                    <form size="lg" controlId="senha">
+                    </div>
+                    <div size="lg" controlId="senha">
                         <label>Senha</label>
                         <input type="password" className="form-control"
                             name="senha"
@@ -96,14 +96,14 @@ export default class Login extends Component {
                             onChange={e => this.updateField(e)}
                             placeholder="Digite a senha..."
                         />
-                    </form>
+                    </div>
                     <hr />
                     <Button block size="lg" type="submit" className="btn-success"
                         onClick={e => this.login()}>
                         Login
                     </Button>
 
-                    <Button block size="lg" type="submit"
+                    <Button block size="lg"
                         onClick={e => this.setModo("cadastro")}>
                         Cadastrar Usuário
                     </Button>
@@ -113,7 +113,7 @@ export default class Login extends Component {
     }
 
     render() {
-        return (
+        return isAuthenticated() ? <Redirect to="/"/> : (
             <SingleFormMain {...headerProps}>
                 {this.state.modo === 'login' && this.renderForm()}
                 {this.state.modo === 'cadastro' && this.renderCadastro()}
@@ -121,21 +121,3 @@ export default class Login extends Component {
         )
     }
 }
-
-
-
-{/* <div className="d-flex bd-highlight mb-3">
-    <div className="mr-auto p-2 bd-highlight">
-        <button className="btn btn-success mr-5"
-            onClick={e => this.login()}>
-            Cadastrar
-    </button>
-    </div>
-
-    <div className="ml-auto p-2 bd-highlight">
-        <button className="btn btn-success"
-            onClick={e => this.login()}>
-            Fazer login
-    </button>
-    </div>
-</div> */}

@@ -1,0 +1,11 @@
+.single-form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.single-form-content{
+    padding: 30px;
+}
+

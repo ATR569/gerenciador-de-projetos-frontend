@@ -35,6 +35,7 @@ const CadastroAluno = () => {
         }).then(resp => {
             console.log("RESP: ", resp);
             alert(`O Aluno(a) ${data.nome} de matricula ${resp.data.matricula} foi cadastrado(a) com sucesso`)
+            window.location.reload()
         }).catch(err => {
             const erro = err.response.data
             alert(`ERRO ${erro.status}: ${erro.descricao}`)
@@ -127,10 +128,10 @@ const CadastroAluno = () => {
                                 </Form.Row>
                                 <hr />
 
-                                <Form.Group as={Col} md="3">
-                                    <Button className="" type="submit">Salvar</Button>
-                                    {/* <Button onClick={this.props.setModo("login")}>Cancelar</Button> */}
-                                </Form.Group>
+                                <div>
+                                    <button className="btn btn-primary" type="submit">Salvar</button>
+                                    <button className="btn btn-secondary ml-2" onClick={e => window.location.reload()}>Cancelar</button>
+                                </div>
 
                             </FormGroup>
                         </Form>

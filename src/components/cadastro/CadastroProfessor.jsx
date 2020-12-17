@@ -145,9 +145,10 @@ const CadastroForm = () => {
                                 </Form.Row>
                                 <hr />
 
-                                <Form.Group as={Col} md="3">
-                                    <Button className="" type="submit">Salvar</Button>
-                                </Form.Group>
+                                <div>
+                                    <button className="btn btn-primary" type="submit">Salvar</button>
+                                    <button className="btn btn-secondary ml-2" onClick={e => window.location.reload()}>Cancelar</button>
+                                </div>
 
                             </FormGroup>
                         </Form>
