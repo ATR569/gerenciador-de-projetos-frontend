@@ -8,7 +8,6 @@ import jwt_decode from "jwt-decode";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Colaboradores from '../colaboradores/Colaboradores'
 import Projeto  from './Projeto'
-import { bootbox } from 'bootbox'
 
 const headerProps = {
     icon: faProjectDiagram,

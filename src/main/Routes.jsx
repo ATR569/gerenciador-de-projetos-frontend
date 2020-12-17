@@ -8,6 +8,7 @@ import Aluno from '../components/alunos/Aluno'
 import Professor from '../components/professor/professor'
 import Logout from '../components/logout/Logout'
 import Projetos from '../components/projetos/Projetos'
+import Cadastro from '../components/cadastro/Cadastro'
 // import <componentes> from '...'
 
 export default props => 
@@ -18,5 +19,6 @@ export default props =>
         <Route exact path='/projetos' component={Projetos} />
         {/* <Route exact path='/login' component={Login} /> */}
         <Route path='/logout' component={Logout} />
+        <Route path='/cadastro' component={Cadastro} />
         <Redirect from='*' to='/' />
     </Switch>
