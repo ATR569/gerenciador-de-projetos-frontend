@@ -25,8 +25,7 @@ const initialState = {
         formacao: ''
     },
     list: [],
-    mostrarForm: false,
-    mostrarList: false,
+    modoForm: false,
 }
 
 export default class ProfessorCrud extends Component {
@@ -35,7 +34,7 @@ export default class ProfessorCrud extends Component {
 
     handleClick(prof) {
         this.setState({
-            mostrarForm: true
+            modoForm: true
         })
 
         this.load(prof)
@@ -57,7 +56,7 @@ export default class ProfessorCrud extends Component {
     }
 
     clear() {
-        this.setState({ prof: initialState.prof, mostrarForm: false })
+        this.setState({ prof: initialState.prof, modoForm: false })
     }
 
     put() {
@@ -80,9 +79,8 @@ export default class ProfessorCrud extends Component {
             const list = this.getUpdatedList(prof, false)
             this.setState({ list })
             alert(`Professor: ${prof.nome} editado com sucesso`)
-            this.setState({
-                mostrarForm: false
-            })
+            this.setState({ modoForm: false })
+            window.location.reload()
         }).catch(err => {
             const erro = err.response.data
             alert(`ERRO ${erro.status}: ${erro.descricao}`)
@@ -115,19 +113,11 @@ export default class ProfessorCrud extends Component {
                 'Authorization': `Bearer ${getToken()}`,
                 'Content-Type': 'application/json'
             },
-            data: {
-                nome: prof.nome,
-                senha: prof.senha,
-                areaAtuacao: prof.areaAtuacao,
-                formacao: prof.formacao
-            }
         }).then(resp => {
             const list = this.getUpdatedList(prof, false)
             this.setState({ list })
             alert(`Professor: ${prof.nome} deletado com sucesso`)
-            this.setState({
-                mostrarForm: false
-            })
+            this.setState({ modoForm: false })
         }).catch(err => {
             const erro = err.response.data
             alert(`ERRO ${erro.status}: ${erro.descricao}`)
@@ -138,7 +128,7 @@ export default class ProfessorCrud extends Component {
         const prof = this.state.prof
         const { usuario } = jwt_decode(getToken())
 
-        if (prof.id === usuario.id) {
+        if (prof.matricula === usuario.matricula) {
             return (
                 <div className="row">
                     <div className="col-12 d-flex justify-content-end">
@@ -177,6 +167,11 @@ export default class ProfessorCrud extends Component {
     }
 
     renderForm() {
+        const prof = this.state.prof
+        const { usuario } = jwt_decode(getToken())
+
+        const permitirEditar = prof.matricula === usuario.matricula
+
         return (
             <div className="form">
                 <div className="row">
@@ -185,6 +180,7 @@ export default class ProfessorCrud extends Component {
                             <label>Nome</label>
                             <input type="text" className="form-control"
                                 name="nome"
+                                readOnly={!permitirEditar}
                                 value={this.state.prof.nome}
                                 onChange={e => this.updateField(e)}
                                 placeholder="Digite o nome..." />
@@ -196,6 +192,7 @@ export default class ProfessorCrud extends Component {
                             <label>Senha</label>
                             <input type="password" className="form-control"
                                 name="senha"
+                                readOnly={!permitirEditar}
                                 value={this.state.prof.senha}
                                 onChange={e => this.updateField(e)}
                                 placeholder="Digite a senha..." />
@@ -207,6 +204,7 @@ export default class ProfessorCrud extends Component {
                             <label>Área Atuação</label>
                             <input type="text" className="form-control"
                                 name="areaAtuacao"
+                                readOnly={!permitirEditar}
                                 value={this.state.prof.areaAtuacao}
                                 onChange={e => this.updateField(e)}
                                 placeholder="Digite a área de atuação..." />
@@ -218,13 +216,13 @@ export default class ProfessorCrud extends Component {
                             <label>Formação</label>
                             <input type="text" className="form-control"
                                 name="formacao"
+                                readOnly={!permitirEditar}
                                 value={this.state.prof.formacao}
                                 onChange={e => this.updateField(e)}
                                 placeholder="Digite a sua formação..." />
                         </div>
                     </div>
                 </div>
-
                 <hr />
                 {this.renderToolbar()}
             </div>
@@ -263,7 +261,6 @@ export default class ProfessorCrud extends Component {
                     <td>
                         <button className="btn btn-warning"
                             onClick={() => this.handleClick(prof)}>
-                            {/* <i className="fa fa-pencil"></i> */}
                             <FontAwesomeIcon icon={faEye}/>
                         </button>
                     </td>
@@ -275,8 +272,8 @@ export default class ProfessorCrud extends Component {
     render() {
         return (
             <Main {...headerProps}>
-                {this.state.mostrarForm && this.renderForm()}
-                {!this.state.mostrarForm && this.renderTable()}
+                {this.state.modoForm && this.renderForm()}
+                {!this.state.modoForm && this.renderTable()}
             </Main>
         )
     }
