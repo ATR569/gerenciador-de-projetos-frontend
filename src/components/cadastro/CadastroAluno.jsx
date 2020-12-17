@@ -1,31 +1,44 @@
 import React from 'react'
 import axios from 'axios'
-import { Button, Form, FormLabel, FormGroup } from 'react-bootstrap';
+import { Button, Form, FormGroup } from 'react-bootstrap';
 import Col from 'react-bootstrap/Col'
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import { URI } from '../../config/config'
 
 const schema = yup.object({
     nome: yup.string().required(),
     curso: yup.string().required(),
     senha: yup.string().required(),
+    confirmacaoSenha: yup.string().required().oneOf([yup.ref('senha'), null], 'Confirmação de senha inválida'),
 })
 
 const initialValues = {
     nome: '',
     senha: '',
+    confirmacaoSenha: '',
     curso: '',
 }
+
+const baseUrl = 'api/alunos'
 
 const CadastroAluno = () => {
 
     const handleSubmit = (data) => {
-        console.log(data)
-        alert(`Usuário cadastrado:
-            Nome: ${data.nome}
-            Senha: ${data.senha}
-            Curso: ${data.curso}
-        `)
+        axios({
+            method: 'POST',
+            url: `${URI}/${baseUrl}`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data
+        }).then(resp => {
+            console.log("RESP: ", resp);
+            alert(`Aluno(a) ${data.nome} cadastrado(a) com sucesso`)
+        }).catch(err => {
+            const erro = err.response.data
+            alert(`ERRO ${erro.status}: ${erro.descricao}`)
+        })
     }
 
     return (
@@ -45,7 +58,7 @@ const CadastroAluno = () => {
                         errors,
                         setFieldValue
                     }) => (
-                        <Form noValidate onSubmit={handleSubmit} className="formulario">
+                        <Form noValidate onSubmit={handleSubmit} className="form-cadastro" autoComplete="off">
                             <FormGroup className="dadosAluno group">
                                 <Form.Group as={Col} md="6" controlId="inputNome">
                                     <Form.Label>Nome Completo *</Form.Label>
@@ -63,23 +76,7 @@ const CadastroAluno = () => {
                                     </Form.Control.Feedback>
                                 </Form.Group>
 
-                                <Form.Group as={Col} md="3" controlId="inputSenha">
-                                    <Form.Label>Senha *</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Informe a Senha"
-                                        name="senha"
-                                        value={values.senha}
-                                        onChange={handleChange}
-                                        isInvalid={!!errors.senha}
-                                        isValid={!!values.senha && !errors.senha}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        Senha é obrigatória
-                                            </Form.Control.Feedback>
-                                </Form.Group>
-
-                                <Form.Group as={Col} md="3" controlId="inputCurso">
+                                <Form.Group as={Col} md="6" controlId="inputCurso">
                                     <Form.Label>Curso *</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -92,10 +89,49 @@ const CadastroAluno = () => {
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         Curso é obrigatório
-                                            </Form.Control.Feedback>
+                                    </Form.Control.Feedback>
                                 </Form.Group>
+
+                                <Form.Row as={Col} md="12">
+                                    <Form.Group as={Col} md="3" controlId="inputSenha">
+                                        <Form.Label>Senha *</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Informe a Senha"
+                                            name="senha"
+                                            value={values.senha}
+                                            onChange={handleChange}
+                                            isInvalid={!!errors.senha}
+                                            isValid={!!values.senha && !errors.senha}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            Senha é obrigatória
+                                    </Form.Control.Feedback>
+                                    </Form.Group>
+
+                                    <Form.Group as={Col} md="3" controlId="inputConfirmacao">
+                                        <Form.Label>Confirmação de Senha *</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Informe a Confirmação"
+                                            name="confirmacaoSenha"
+                                            value={values.confirmacaoSenha}
+                                            onChange={handleChange}
+                                            isInvalid={!!errors.confirmacaoSenha}
+                                            isValid={!!values.confirmacaoSenha && !errors.confirmacaoSenha}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            Confirmação de Senha é inválida
+                                    </Form.Control.Feedback>
+                                    </Form.Group>
+                                </Form.Row>
+                                <hr />
+
+                                <Form.Group as={Col} md="3">
+                                    <Button className="" type="submit">Salvar</Button>
+                                </Form.Group>
+
                             </FormGroup>
-                            <Button type="submit">Salvar</Button>
                         </Form>
                     )
                 }
