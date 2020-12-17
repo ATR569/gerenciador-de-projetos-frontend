@@ -238,14 +238,6 @@ export default class ListaAlunos extends Component {
                             onClick={() => this.handleClick(aluno)}>
                             <FontAwesomeIcon icon={faEye} />
                         </button>
-                        {/* <button className="btn btn-warning"
-                            onClick={(e) => this.load(aluno)}>
-                            <i className="fa fa-pencil"></i>
-                        </button>
-                        <button className="btn btn-danger ml-2"
-                            onClick={() => this.remove(aluno)}>
-                            <i className="fa fa-trash"></i>
-                        </button> */}
                     </td>
                 </tr>
             )
