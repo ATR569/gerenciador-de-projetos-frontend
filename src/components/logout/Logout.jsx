@@ -6,8 +6,12 @@ export default class Logout extends Component {
     render() {
         removeToken()
 
+        {window.location.reload()}
+
         return (
-            <Redirect to="/" push={true} />
+            <React.Fragment>
+                <Redirect to="/home" push={true} />
+            </React.Fragment>
         )
     }
 }

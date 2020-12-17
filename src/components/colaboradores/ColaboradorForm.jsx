@@ -3,34 +3,50 @@ import React, { Component } from 'react'
 import { URI } from '../../config/config'
 import { getToken } from '../../service/auth'
 
-const baseUrl = 'api/professores'
+const baseUrl = 'api/projetos'
 
 const initialState = {
-    projeto: { }
+    colaborador: {},
+    alunos: []
 }
 
-export default class ProjetoForm extends Component {
+export default class ColaboradorForm extends Component {
 
     state = { ...initialState }
 
+    componentWillMount() {
+        axios(`${URI}/api/alunos`, {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            }
+        })
+            .then(resp => {
+                this.setState({ alunos: resp.data })
+            })
+            .catch(err => {
+                const erro = err.response.data
+                alert(`ERRO ${erro.status}: ${erro.descricao}`)
+            })
+    }
+
     save() {
-        const idProfessor = this.props.coordenador.id
-        const projeto = this.state.projeto
+        const idProjeto = this.props.projeto.id
+        const colaborador = this.state.colaborador
 
         axios({
             method: 'post',
-            url: `${URI}/${baseUrl}/${idProfessor}/projetos`,
+            url: `${URI}/${baseUrl}/${idProjeto}/colaboradores`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
             data: {
-                nome: projeto.nome,
-                descricao: projeto.descricao
+                idAluno: parseInt(colaborador.idAluno),
+                papel: colaborador.papel
             }
         }).then(() => {
-            alert(`Projeto cadastrado com sucesso`)
-            this.props.setModo && this.props.setModo('form')
+            alert(`Colaborador adicionado com sucesso`)
+            this.props.setModo && this.props.setModo('detail')
         }).catch(err => {
             const erro = err.response.data
             alert(`ERRO ${erro.status}: ${erro.descricao}`)
@@ -38,9 +54,9 @@ export default class ProjetoForm extends Component {
     }
 
     updateField(event) {
-        const projeto = { ...this.state.projeto }
-        projeto[event.target.name] = event.target.value
-        this.setState({ projeto })
+        const colaborador = { ...this.state.colaborador }
+        colaborador[event.target.name] = event.target.value
+        this.setState({ colaborador })
     }
 
     renderToolbar() {
@@ -49,7 +65,7 @@ export default class ProjetoForm extends Component {
                 <div className="col-12 d-flex justify-content-end ml-1">
                     <button className="btn btn-secondary ml-2"
                         onClick={e => {
-                            this.props.setModo && this.props.setModo('form')
+                            this.props.setModo && this.props.setModo('detail')
                         }}>
                         Cancelar
                     </button>
@@ -65,29 +81,38 @@ export default class ProjetoForm extends Component {
         )
     }
 
+    renderItems() {
+        return this.state.alunos.map(aluno => {
+            return (
+                <option value={aluno.id}>{aluno.nome} - Matrícula:{aluno.matricula}</option>
+            )
+        })
+    }
+
     renderForm() {
         return (
             <div className="form">
                 <div className="row">
                     <div className="col-12">
                         <div className="form-group">
-                            <label>Nome do projeto</label>
-                            <input type="text" className="form-control"
-                                name="nome"
-                                value={this.state.projeto.nome}
-                                onChange={e => this.updateField(e)}
-                                placeholder="O nome do projeto..." />
+                            <label>Aluno</label>
+                            <select className="form-control"
+                                value={this.state.colaborador.aluno}
+                                name="idAluno"
+                                onChange={e => this.updateField(e)}>
+                                    {this.renderItems()}
+                                </select>
                         </div>
                     </div>
 
                     <div className="col-12">
                         <div className="form-group">
-                            <label>Descrição do Projeto</label>
+                            <label>Papel do aluno</label>
                             <input type="text" className="form-control"
-                                name="descricao"
-                                value={this.state.projeto.descricao}
+                                name="papel"
+                                value={this.state.colaborador.papel}
                                 onChange={e => this.updateField(e)}
-                                placeholder="Digite a descrição do projeto..." />
+                                placeholder="Papel exercido pelo aluno..." />
                         </div>
                     </div>
 
@@ -101,7 +126,7 @@ export default class ProjetoForm extends Component {
     render() {
         return (
             <React.Fragment>
-                { this.renderForm() }
+                { this.renderForm()}
             </React.Fragment>
         )
     }
