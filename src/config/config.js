@@ -1,3 +1,3 @@
-const URI = 'https://gerenciador-de-projetos-back.herokuapp.com'
+const URI = process.env.REACT_APP_API_URL
 
 export { URI }
