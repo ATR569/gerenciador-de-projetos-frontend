@@ -6,6 +6,7 @@ import { faChalkboardTeacher, faProjectDiagram, faEye} from '@fortawesome/free-s
 import { getToken } from '../../service/auth'
 import jwt_decode from "jwt-decode";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import ProjetoForm from '../projetos/ProjetoForm'
 
 const headerProps = {
     icon: faChalkboardTeacher,
@@ -25,18 +26,19 @@ const initialState = {
         formacao: ''
     },
     list: [],
-    modoForm: false,
+    modo: 'list',
 }
 
 export default class ProfessorCrud extends Component {
 
     state = { ...initialState }
 
-    handleClick(prof) {
-        this.setState({
-            modoForm: true
-        })
+    setModo(modo) {
+        this.setState({modo})
+    }
 
+    handleClick(prof) {
+        this.setModo('form')
         this.load(prof)
     }
 
@@ -56,7 +58,7 @@ export default class ProfessorCrud extends Component {
     }
 
     clear() {
-        this.setState({ prof: initialState.prof, modoForm: false })
+        this.setState({ prof: initialState.prof, modo: 'list' })
     }
 
     put() {
@@ -79,7 +81,7 @@ export default class ProfessorCrud extends Component {
             const list = this.getUpdatedList(prof, false)
             this.setState({ list })
             alert(`Professor: ${prof.nome} editado com sucesso`)
-            this.setState({ modoForm: false })
+            this.setState({ modo: 'list' })
             window.location.reload()
         }).catch(err => {
             const erro = err.response.data
@@ -117,7 +119,7 @@ export default class ProfessorCrud extends Component {
             const list = this.getUpdatedList(prof, false)
             this.setState({ list })
             alert(`Professor: ${prof.nome} deletado com sucesso`)
-            this.setState({ modoForm: false })
+            this.setState({ modo: 'list' })
         }).catch(err => {
             const erro = err.response.data
             alert(`ERRO ${erro.status}: ${erro.descricao}`)
@@ -148,7 +150,7 @@ export default class ProfessorCrud extends Component {
                             </button>
 
                         <button className="btn btn-warning ml-2"
-                            onClick={e => this.clear(e)}>
+                            onClick={e => this.setState({modo: 'project'})}>
                             <FontAwesomeIcon icon={faProjectDiagram} /> Criar Projeto
                             </button>
                     </div>
@@ -163,6 +165,12 @@ export default class ProfessorCrud extends Component {
                     Voltar
                 </button>
             </div>
+        )
+    }
+
+    renderProject(){
+        return (
+            <ProjetoForm coordenador={this.state.prof} setModo={this.setModo.bind(this)} />
         )
     }
 
@@ -229,7 +237,6 @@ export default class ProfessorCrud extends Component {
         )
     }
 
-
     renderTable() {
         return (
             <table className="table mt-4">
@@ -272,8 +279,9 @@ export default class ProfessorCrud extends Component {
     render() {
         return (
             <Main {...headerProps}>
-                {this.state.modoForm && this.renderForm()}
-                {!this.state.modoForm && this.renderTable()}
+                {this.state.modo === 'form' && this.renderForm()}
+                {this.state.modo === 'list' && this.renderTable()}
+                {this.state.modo === 'project' && this.renderProject()}
             </Main>
         )
     }
